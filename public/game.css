@@ -1,0 +1,141 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+align-items: flex-start;
+padding-top: 0px;
+}
+
+.poll-wrapper {
+  width: 100%;
+  max-width: 100%;
+  background: #f0efe9;
+  border-radius: 20px;
+  padding: 12px 12px 14px 12px;
+}
+
+.poll-card {
+  background: #ffffff;
+  border: 1px solid #e3e1d9;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  visibility: hidden;
+}
+
+.poll-card.ready {
+  visibility: visible;
+}
+
+.poll-header,
+.poll-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.poll-header {
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.poll-meta {
+  font-size: 17px;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+}
+
+.poll-votes {
+  font-size: 17px;
+  color: #777;
+  white-space: nowrap;
+}
+
+.poll-question {
+font-size: 18px;
+font-weight: 700;
+line-height: 1.25;
+  color: #000;
+  margin-bottom: 16px;
+}
+
+.poll-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.poll-option {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid #d8d6cd;
+  background: #f7f6f2;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.poll-option--selected {
+  border-color: #4d7fe0;
+  background: #e8f0fc;
+}
+
+.poll-option-label {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.poll-option--selected .poll-option-label,
+.poll-option--selected .poll-option-pct {
+  color: #3865c4;
+  font-weight: 600;
+}
+
+.poll-option-pct {
+  font-size: 22px;
+  font-weight: 500;
+  color: #333;
+}
+
+.poll-progress {
+  height: 7px;
+  width: 100%;
+  border-radius: 99px;
+  background: #d8d6cd;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.poll-progress-fill {
+  height: 100%;
+  background: #4d7fe0;
+}
+
+.poll-footer {
+  border-top: 1px solid #ececec;
+  padding-top: 16px;
+}
+
+.poll-footer-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  color: #777;
+  white-space: nowrap;
+}

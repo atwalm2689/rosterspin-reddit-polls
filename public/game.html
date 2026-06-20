@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="game.css" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"
+    />
+    <title>rosterspin</title>
+  </head>
+
+  <body class="app">
+    <div class="poll-wrapper">
+      <div class="poll-card">
+        <div class="poll-header">
+          <span class="poll-meta">Loading...</span>
+          <span id="vote-count" class="poll-votes">0 votes</span>
+        </div>
+
+<p id="poll-question" class="poll-question">
+  Loading matchup...
+</p>
+
+        <div class="poll-options">
+          <button id="yankees-button" class="poll-option">
+<span id="team-a-label" class="poll-option-label">
+  Team A
+</span>
+            <span id="yankees-percent" class="poll-option-pct">0%</span>
+          </button>
+
+          <button id="bluejays-button" class="poll-option">
+            <span id="team-b-label" class="poll-option-label">
+  Team B
+</span>
+            <span id="bluejays-percent" class="poll-option-pct">0%</span>
+          </button>
+        </div>
+
+        <div class="poll-progress">
+          <div id="progress-fill" class="poll-progress-fill" style="width: 0%;"></div>
+        </div>
+
+        <div class="poll-footer">
+          <span class="poll-footer-item">🕒 Locks at first pitch</span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="game.js" defer></script>
+  </body>
+</html>
