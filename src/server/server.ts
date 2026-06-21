@@ -104,9 +104,16 @@ function getPostCountKey(postId: string): string {
   return `count:${postId}`;
 }
 
+function getTeamAVotesKey(postId: string): string {
+  return `teamAVotes:${postId}`;
+}
+
+function getTeamBVotesKey(postId: string): string {
+  return `teamBVotes:${postId}`;
+}
 async function onInit(): Promise<InitResponse> {
   const postId = getPostId();
-  const totals = await getVoteTotals();
+  const totals = await getVoteTotals(postId);
 const poll = await getPollConfig(context, postId);
  return {
   type: "init",
@@ -121,9 +128,9 @@ const poll = await getPollConfig(context, postId);
 };
 }
 
-async function getVoteTotals() {
-  const teamAVotes = Number((await redis.get("teamAVotes")) ?? 0);
-  const teamBVotes = Number((await redis.get("teamBVotes")) ?? 0);
+async function getVoteTotals(postId: string) {
+  const teamAVotes = Number((await redis.get(getTeamAVotesKey(postId))) ?? 0);
+  const teamBVotes = Number((await redis.get(getTeamBVotesKey(postId))) ?? 0);
 
   const totalVotes = teamAVotes + teamBVotes;
 
@@ -143,8 +150,9 @@ function getUserVoteKey() {
 async function onVoteTeamA(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
+  const postId = getPostId();
 if (isPollLocked()) {
-  const totals = await getVoteTotals();
+  const totals = await getVoteTotals(postId);
 
   return {
     type: "vote",
@@ -156,7 +164,7 @@ if (isPollLocked()) {
   };
 }
   if (existingVote) {
-    const totals = await getVoteTotals();
+    const totals = await getVoteTotals(postId);
 
 return {
   type: "vote",
@@ -169,9 +177,9 @@ return {
   }
 
   await redis.set(userVoteKey, POLL.awayTeam);
-  await redis.incrBy("teamAVotes", 1);
+  await redis.incrBy(getTeamAVotesKey(postId), 1);
 
-  const totals = await getVoteTotals();
+  const totals = await getVoteTotals(postId);
 
 return {
   type: "vote",
@@ -186,8 +194,9 @@ return {
 async function onVoteTeamB(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
+  const postId = getPostId();
 if (isPollLocked()) {
-  const totals = await getVoteTotals();
+  const totals = await getVoteTotals(postId);
 
   return {
     type: "vote",
@@ -199,7 +208,7 @@ if (isPollLocked()) {
   };
 }
   if (existingVote) {
-    const totals = await getVoteTotals();
+    const totals = await getVoteTotals(postId);
 return {
   type: "vote",
   team: existingVote,
@@ -211,9 +220,9 @@ return {
   }
 
   await redis.set(userVoteKey, POLL.homeTeam);
-  await redis.incrBy("teamBVotes", 1);
+  await redis.incrBy(getTeamBVotesKey(postId), 1);
 
-  const totals = await getVoteTotals();
+  const totals = await getVoteTotals(postId);
 
 return {
   type: "vote",
