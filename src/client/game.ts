@@ -1,7 +1,7 @@
 import { ApiEndpoint } from "../shared/api.ts";
 
-const yankeesButton = document.getElementById("yankees-button") as HTMLButtonElement;
-const blueJaysButton = document.getElementById("bluejays-button") as HTMLButtonElement;
+const teamAButton = document.getElementById("teamA-button") as HTMLButtonElement;
+const teamBButton = document.getElementById("teamB-button") as HTMLButtonElement;
 
 const pollMeta = document.querySelector(".poll-meta") as HTMLSpanElement;
 const pollQuestion = document.getElementById("poll-question") as HTMLParagraphElement;
@@ -25,8 +25,8 @@ async function init() {
   const teamBPercent =
     data.totalVotes === 0 ? 0 : Math.round((data.teamBVotes / data.totalVotes) * 100);
 
-  document.getElementById("yankees-percent")!.textContent = `${teamAPercent}%`;
-  document.getElementById("bluejays-percent")!.textContent = `${teamBPercent}%`;
+  document.getElementById("teamA-percent")!.textContent = `${teamAPercent}%`;
+  document.getElementById("teamB-percent")!.textContent = `${teamBPercent}%`;
   document.getElementById("vote-count")!.textContent = `${data.totalVotes} votes`;
   document.getElementById("progress-fill")!.style.width = `${teamAPercent}%`;
 }
@@ -43,10 +43,10 @@ const teamAPercent =
 const teamBPercent =
   data.totalVotes === 0 ? 0 : Math.round((data.teamBVotes / data.totalVotes) * 100);
 
-document.getElementById("yankees-percent")!.textContent =
+document.getElementById("teamA-percent")!.textContent =
   `${teamAPercent}%`;
 
-document.getElementById("bluejays-percent")!.textContent =
+document.getElementById("teamB-percent")!.textContent =
   `${teamBPercent}%`;
 
 document.getElementById("vote-count")!.textContent =
@@ -58,12 +58,12 @@ document.getElementById("progress-fill")!.style.width =
 
 }
 
-yankeesButton.addEventListener("click", () => {
-  vote(ApiEndpoint.VoteYankees, "Team A");
+teamAButton.addEventListener("click", () => {
+  vote(ApiEndpoint.VoteTeamA, "Team A");
 });
 
-blueJaysButton.addEventListener("click", () => {
-  vote(ApiEndpoint.VoteBlueJays, "Team B");
+teamBButton.addEventListener("click", () => {
+  vote(ApiEndpoint.VoteTeamB, "Team B");
 });
 function startCountdown(gameTime: string) {
   function updateCountdown() {
@@ -74,10 +74,10 @@ function startCountdown(gameTime: string) {
 
 if (diff <= 0) {
   countdownEl.textContent = "🔒 Locked";
-  yankeesButton.disabled = true;
-  blueJaysButton.disabled = true;
-  yankeesButton.classList.add("poll-option--locked");
-  blueJaysButton.classList.add("poll-option--locked");
+  teamAButton.disabled = true;
+  teamBButton.disabled = true;
+  teamAButton.classList.add("poll-option--locked");
+  teamBButton.classList.add("poll-option--locked");
   return;
 }
 

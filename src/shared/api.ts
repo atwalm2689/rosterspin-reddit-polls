@@ -43,8 +43,8 @@ export type VoteResponse = {
 };
 export const ApiEndpoint = {
   Init: "/api/init",
-VoteYankees: "/api/vote-yankees",
-VoteBlueJays: "/api/vote-bluejays",
+VoteTeamA: "/api/vote-teamA",
+VoteTeamB: "/api/vote-teamB",
   OnPostCreate: "/internal/menu/post-create",
   OnAppInstall: "/internal/on-app-install",
 } as const;
