@@ -21,7 +21,7 @@ const POLL = {
   question: "Who wins: Maple Leafs @ Golden Knights?",
   teamA: "Maple Leafs",
   teamB: "Golden Knights",
-  gameTime: "2026-06-21T02:03:00-06:00",
+  gameTime: "2026-06-21T20:00:00-04:00",
 };
 export async function serverOnRequest(
   req: IncomingMessage,
