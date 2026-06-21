@@ -21,6 +21,7 @@ const POLL = {
   question: "Who wins: Maple Leafs @ Golden Knights?",
   teamA: "Maple Leafs",
   teamB: "Golden Knights",
+  gameTime: "2026-06-21T02:03:00-06:00",
 };
 export async function serverOnRequest(
   req: IncomingMessage,
@@ -97,16 +98,17 @@ async function onInit(): Promise<InitResponse> {
   const postId = getPostId();
   const totals = await getVoteTotals();
 
-  return {
-    type: "init",
-    postId,
-    username: context.username ?? "user",
-    meta: POLL.meta,
-    question: POLL.question,
-    teamA: POLL.teamA,
-    teamB: POLL.teamB,
-    ...totals,
-  };
+ return {
+  type: "init",
+  postId,
+  username: context.username ?? "user",
+  meta: POLL.meta,
+  question: POLL.question,
+  teamA: POLL.teamA,
+  teamB: POLL.teamB,
+  gameTime: POLL.gameTime,
+  ...totals,
+};
 }
 
 async function getVoteTotals() {
@@ -118,6 +120,10 @@ async function getVoteTotals() {
   return { teamAVotes, teamBVotes, totalVotes };
 }
 
+function isPollLocked(): boolean {
+  return Date.now() >= new Date(POLL.gameTime).getTime();
+}
+
 function getUserVoteKey() {
   const postId = getPostId();
   const username = context.username ?? "anonymous";
@@ -127,15 +133,29 @@ function getUserVoteKey() {
 async function onVoteYankees(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
+if (isPollLocked()) {
+  const totals = await getVoteTotals();
 
+  return {
+    type: "vote",
+    team: existingVote ?? "",
+    teamA: POLL.teamA,
+    teamB: POLL.teamB,
+    gameTime: POLL.gameTime,
+    ...totals,
+  };
+}
   if (existingVote) {
     const totals = await getVoteTotals();
 
-    return {
-      type: "vote",
-      team: existingVote,
-      ...totals,
-    };
+return {
+  type: "vote",
+  team: existingVote,
+  teamA: POLL.teamA,
+  teamB: POLL.teamB,
+  gameTime: POLL.gameTime,
+  ...totals,
+};
   }
 
   await redis.set(userVoteKey, POLL.teamA);
@@ -143,24 +163,41 @@ async function onVoteYankees(): Promise<VoteResponse> {
 
   const totals = await getVoteTotals();
 
-  return {
-    type: "vote",
-    team: POLL.teamA,
-    ...totals,
-  };
+return {
+  type: "vote",
+  team: POLL.teamA,
+  teamA: POLL.teamA,
+  teamB: POLL.teamB,
+  gameTime: POLL.gameTime,
+  ...totals,
+};
 }
 
 async function onVoteBlueJays(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
+if (isPollLocked()) {
+  const totals = await getVoteTotals();
 
+  return {
+    type: "vote",
+    team: existingVote ?? "",
+    teamA: POLL.teamA,
+    teamB: POLL.teamB,
+    gameTime: POLL.gameTime,
+    ...totals,
+  };
+}
   if (existingVote) {
     const totals = await getVoteTotals();
-    return {
-      type: "vote",
-      team: existingVote,
-      ...totals,
-    };
+return {
+  type: "vote",
+  team: existingVote,
+  teamA: POLL.teamA,
+  teamB: POLL.teamB,
+  gameTime: POLL.gameTime,
+  ...totals,
+};
   }
 
   await redis.set(userVoteKey, POLL.teamB);
@@ -168,11 +205,14 @@ async function onVoteBlueJays(): Promise<VoteResponse> {
 
   const totals = await getVoteTotals();
 
-  return {
-    type: "vote",
-    team: POLL.teamB,
-    ...totals,
-  };
+return {
+  type: "vote",
+  team: POLL.teamB,
+  teamA: POLL.teamA,
+  teamB: POLL.teamB,
+  gameTime: POLL.gameTime,
+  ...totals,
+};
 }
 
 async function onIncrement(req: IncomingMessage): Promise<IncrementResponse> {

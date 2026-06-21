@@ -6,6 +6,7 @@ export type InitResponse = {
   question: string;
   teamA: string;
   teamB: string;
+  gameTime: string;
   teamAVotes: number;
   teamBVotes: number;
   totalVotes: number;
@@ -35,6 +36,7 @@ export type VoteResponse = {
   team: string;
   teamA: string;
   teamB: string;
+  gameTime: string;
   teamAVotes: number;
   teamBVotes: number;
   totalVotes: number;

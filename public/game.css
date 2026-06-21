@@ -83,7 +83,10 @@ background: #1e293b;
   cursor: pointer;
   font-family: inherit;
 }
-
+.poll-option--locked {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
 .poll-option--selected {
 border-color: #22c55e;
   background: #14532d;
