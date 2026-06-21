@@ -27,7 +27,6 @@ async function init() {
   document.getElementById("bluejays-percent")!.textContent = `${teamBPercent}%`;
   document.getElementById("vote-count")!.textContent = `${data.totalVotes} votes`;
   document.getElementById("progress-fill")!.style.width = `${teamAPercent}%`;
-  document.querySelector(".poll-card")?.classList.add("ready");
 }
 
 init();
