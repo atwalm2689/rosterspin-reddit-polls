@@ -6,7 +6,7 @@
     "entrypoints": {
       "default": {
         "inline": true,
-        "entry": "splash.html"
+        "entry": "game.html"
       },
       "game": {
         "entry": "game.html"
@@ -21,7 +21,7 @@
     "items": [
       {
         "label": "Create a new post",
-        "description": "rosterspin-dev",
+        "description": "Create FanVote Poll",
         "location": "subreddit",
         "forUserType": "moderator",
         "endpoint": "/internal/menu/post-create"
@@ -36,6 +36,6 @@
     "build": "node --experimental-strip-types ./tools/build.ts --minify"
   },
   "dev": {
-    "subreddit": "rosterspin_dev_dev"
+    "subreddit": "FanVote_Dev"
   }
 }

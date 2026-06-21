@@ -277,7 +277,7 @@ async function onMenuNewPost(): Promise<UiResponse> {
 
 async function onAppInstall(): Promise<TriggerResponse> {
   await reddit.submitCustomPost({
-    title: "rosterspin-dev",
+    title: "New FanVote Poll",
   });
 
   return {};
