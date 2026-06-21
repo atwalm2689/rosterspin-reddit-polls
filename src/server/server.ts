@@ -22,6 +22,17 @@ const POLL = {
   homeTeam: "Golden Knights",
   gameTime: "2026-06-21T20:00:00-04:00",
 };
+type PollConfig = typeof POLL;
+
+async function getPollConfig(context: any, postId: string): Promise<PollConfig> {
+  const savedConfig = await context.redis.get(`poll:${postId}:config`);
+
+  if (savedConfig) {
+    return JSON.parse(savedConfig);
+  }
+
+  return POLL;
+}
 export async function serverOnRequest(
   req: IncomingMessage,
   rsp: ServerResponse,
@@ -53,12 +64,12 @@ async function onRequest(
     case ApiEndpoint.Init:
       body = await onInit();
       break;
-case ApiEndpoint.VoteYankees:
-  body = await onVoteYankees();
+case ApiEndpoint.VoteTeamA:
+  body = await onVoteTeamA();
   break;
 
-case ApiEndpoint.VoteBlueJays:
-  body = await onVoteBlueJays();
+case ApiEndpoint.VoteTeamB:
+  body = await onVoteTeamB();
   break;
     case ApiEndpoint.OnPostCreate:
       body = await onMenuNewPost();
@@ -96,16 +107,16 @@ function getPostCountKey(postId: string): string {
 async function onInit(): Promise<InitResponse> {
   const postId = getPostId();
   const totals = await getVoteTotals();
-
+const poll = await getPollConfig(context, postId);
  return {
   type: "init",
   postId,
   username: context.username ?? "user",
-  meta: `${POLL.sport} • Today`,
-  question: `Who wins: ${POLL.awayTeam} @ ${POLL.homeTeam}?`,
-  teamA: POLL.awayTeam,
-  teamB: POLL.homeTeam,
-  gameTime: POLL.gameTime,
+  meta: `${poll.sport} • Today`,
+  question: `Who wins: ${poll.awayTeam} @ ${poll.homeTeam}?`,
+  teamA: poll.awayTeam,
+  teamB: poll.homeTeam,
+  gameTime: poll.gameTime,
   ...totals,
 };
 }
@@ -129,7 +140,7 @@ function getUserVoteKey() {
   return `vote:${postId}:${username}`;
 }
 
-async function onVoteYankees(): Promise<VoteResponse> {
+async function onVoteTeamA(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
 if (isPollLocked()) {
@@ -172,7 +183,7 @@ return {
 };
 }
 
-async function onVoteBlueJays(): Promise<VoteResponse> {
+async function onVoteTeamB(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
 if (isPollLocked()) {
