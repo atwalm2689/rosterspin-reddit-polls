@@ -17,10 +17,9 @@ import {
 import { once } from "node:events";
 
 const POLL = {
-  meta: "NHL · Today, 8:00 PM ET",
-  question: "Who wins: Maple Leafs @ Golden Knights?",
-  teamA: "Maple Leafs",
-  teamB: "Golden Knights",
+  sport: "NHL",
+  awayTeam: "Maple Leafs",
+  homeTeam: "Golden Knights",
   gameTime: "2026-06-21T20:00:00-04:00",
 };
 export async function serverOnRequest(
@@ -102,10 +101,10 @@ async function onInit(): Promise<InitResponse> {
   type: "init",
   postId,
   username: context.username ?? "user",
-  meta: POLL.meta,
-  question: POLL.question,
-  teamA: POLL.teamA,
-  teamB: POLL.teamB,
+  meta: `${POLL.sport} • Today`,
+  question: `Who wins: ${POLL.awayTeam} @ ${POLL.homeTeam}?`,
+  teamA: POLL.awayTeam,
+  teamB: POLL.homeTeam,
   gameTime: POLL.gameTime,
   ...totals,
 };
@@ -139,8 +138,8 @@ if (isPollLocked()) {
   return {
     type: "vote",
     team: existingVote ?? "",
-    teamA: POLL.teamA,
-    teamB: POLL.teamB,
+    teamA: POLL.awayTeam,
+    teamB: POLL.homeTeam,
     gameTime: POLL.gameTime,
     ...totals,
   };
@@ -151,23 +150,23 @@ if (isPollLocked()) {
 return {
   type: "vote",
   team: existingVote,
-  teamA: POLL.teamA,
-  teamB: POLL.teamB,
+  teamA: POLL.awayTeam,
+  teamB: POLL.homeTeam,
   gameTime: POLL.gameTime,
   ...totals,
 };
   }
 
-  await redis.set(userVoteKey, POLL.teamA);
+  await redis.set(userVoteKey, POLL.awayTeam);
   await redis.incrBy("teamAVotes", 1);
 
   const totals = await getVoteTotals();
 
 return {
   type: "vote",
-  team: POLL.teamA,
-  teamA: POLL.teamA,
-  teamB: POLL.teamB,
+  team: POLL.awayTeam,
+  teamA: POLL.awayTeam,
+  teamB: POLL.homeTeam,
   gameTime: POLL.gameTime,
   ...totals,
 };
@@ -182,8 +181,8 @@ if (isPollLocked()) {
   return {
     type: "vote",
     team: existingVote ?? "",
-    teamA: POLL.teamA,
-    teamB: POLL.teamB,
+    teamA: POLL.awayTeam,
+    teamB: POLL.homeTeam,
     gameTime: POLL.gameTime,
     ...totals,
   };
@@ -193,23 +192,23 @@ if (isPollLocked()) {
 return {
   type: "vote",
   team: existingVote,
-  teamA: POLL.teamA,
-  teamB: POLL.teamB,
+  teamA: POLL.awayTeam,
+  teamB: POLL.homeTeam,
   gameTime: POLL.gameTime,
   ...totals,
 };
   }
 
-  await redis.set(userVoteKey, POLL.teamB);
+  await redis.set(userVoteKey, POLL.homeTeam);
   await redis.incrBy("teamBVotes", 1);
 
   const totals = await getVoteTotals();
 
 return {
   type: "vote",
-  team: POLL.teamB,
-  teamA: POLL.teamA,
-  teamB: POLL.teamB,
+  team: POLL.homeTeam,
+  teamA: POLL.awayTeam,
+  teamB: POLL.homeTeam,
   gameTime: POLL.gameTime,
   ...totals,
 };
