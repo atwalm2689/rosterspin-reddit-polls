@@ -25,7 +25,7 @@ const POLL = {
 type PollConfig = typeof POLL;
 
 async function getPollConfig(context: any, postId: string): Promise<PollConfig> {
-  const savedConfig = await context.redis.get(`poll:${postId}:config`);
+  const savedConfig = await redis.get(`poll:${postId}:config`);
 
   if (savedConfig) {
     return JSON.parse(savedConfig);
