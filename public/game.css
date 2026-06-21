@@ -102,8 +102,8 @@ border-color: #22c55e;
 }
 
 .poll-option-pct {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   color: #ffffff;
 }
 
@@ -141,8 +141,12 @@ border-color: #22c55e;
 }
 .powered-by {
   font-size: 11px;
-  color: #8a8a8a;
+  color: #a8a8a8;
   white-space: nowrap;
+}
+
+.powered-by strong {
+  color: #ffffff;
 }
 @media (max-width: 480px) {
   .poll-card {
@@ -170,7 +174,7 @@ border-color: #22c55e;
   }
 
   .poll-option-pct {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .poll-footer-item {
