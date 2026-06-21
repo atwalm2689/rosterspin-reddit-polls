@@ -151,15 +151,16 @@ async function onVoteTeamA(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
   const postId = getPostId();
+  const poll = await getPollConfig(context, postId);
 if (isPollLocked()) {
   const totals = await getVoteTotals(postId);
 
   return {
     type: "vote",
     team: existingVote ?? "",
-    teamA: POLL.awayTeam,
-    teamB: POLL.homeTeam,
-    gameTime: POLL.gameTime,
+    teamA: poll.awayTeam,
+    teamB: poll.homeTeam,
+    gameTime: poll.gameTime,
     ...totals,
   };
 }
@@ -169,24 +170,24 @@ if (isPollLocked()) {
 return {
   type: "vote",
   team: existingVote,
-  teamA: POLL.awayTeam,
-  teamB: POLL.homeTeam,
-  gameTime: POLL.gameTime,
+  teamA: poll.awayTeam,
+  teamB: poll.homeTeam,
+  gameTime: poll.gameTime,
   ...totals,
 };
   }
 
-  await redis.set(userVoteKey, POLL.awayTeam);
+  await redis.set(userVoteKey, poll.awayTeam);
   await redis.incrBy(getTeamAVotesKey(postId), 1);
 
   const totals = await getVoteTotals(postId);
 
 return {
   type: "vote",
-  team: POLL.awayTeam,
-  teamA: POLL.awayTeam,
-  teamB: POLL.homeTeam,
-  gameTime: POLL.gameTime,
+  team: poll.awayTeam,
+  teamA: poll.awayTeam,
+  teamB: poll.homeTeam,
+  gameTime: poll.gameTime,
   ...totals,
 };
 }
@@ -195,15 +196,16 @@ async function onVoteTeamB(): Promise<VoteResponse> {
   const userVoteKey = getUserVoteKey();
   const existingVote = await redis.get(userVoteKey);
   const postId = getPostId();
+  const poll = await getPollConfig(context, postId);
 if (isPollLocked()) {
   const totals = await getVoteTotals(postId);
 
   return {
     type: "vote",
     team: existingVote ?? "",
-    teamA: POLL.awayTeam,
-    teamB: POLL.homeTeam,
-    gameTime: POLL.gameTime,
+    teamA: poll.awayTeam,
+    teamB: poll.homeTeam,
+    gameTime: poll.gameTime,
     ...totals,
   };
 }
@@ -212,24 +214,24 @@ if (isPollLocked()) {
 return {
   type: "vote",
   team: existingVote,
-  teamA: POLL.awayTeam,
-  teamB: POLL.homeTeam,
-  gameTime: POLL.gameTime,
+  teamA: poll.awayTeam,
+  teamB: poll.homeTeam,
+  gameTime: poll.gameTime,
   ...totals,
 };
   }
 
-  await redis.set(userVoteKey, POLL.homeTeam);
+  await redis.set(userVoteKey, poll.homeTeam);
   await redis.incrBy(getTeamBVotesKey(postId), 1);
 
   const totals = await getVoteTotals(postId);
 
 return {
   type: "vote",
-  team: POLL.homeTeam,
-  teamA: POLL.awayTeam,
-  teamB: POLL.homeTeam,
-  gameTime: POLL.gameTime,
+  team: poll.homeTeam,
+  teamA: poll.awayTeam,
+  teamB: poll.homeTeam,
+  gameTime: poll.gameTime,
   ...totals,
 };
 }
