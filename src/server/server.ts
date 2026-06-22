@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { context, reddit, redis } from "@devvit/web/server";
+import { context, EntrypointHeight, reddit, redis } from "@devvit/web/server";
 import type {
   PartialJsonValue,
   TriggerResponse,
@@ -32,6 +32,9 @@ async function getPollConfig(context: any, postId: string): Promise<PollConfig> 
   }
 
   return POLL;
+}
+async function savePollConfig(postId: string, poll: PollConfig): Promise<void> {
+  await redis.set(`poll:${postId}:config`, JSON.stringify(poll));
 }
 export async function serverOnRequest(
   req: IncomingMessage,
@@ -268,7 +271,20 @@ async function onDecrement(req: IncomingMessage): Promise<DecrementResponse> {
 }
 
 async function onMenuNewPost(): Promise<UiResponse> {
-  const post = await reddit.submitCustomPost({ title: context.appName });
+ const post = await reddit.submitCustomPost({
+  title: "Mets vs Phillies",
+  styles: {
+    height: EntrypointHeight.REGULAR,
+  },
+});
+
+  await savePollConfig(post.id, {
+    sport: "MLB",
+    awayTeam: "Mets",
+    homeTeam: "Phillies",
+    gameTime: "2026-06-21T17:20:00-06:00",
+  });
+
   return {
     showToast: { text: `Post ${post.id} created.`, appearance: "success" },
     navigateTo: post.url,
@@ -277,8 +293,11 @@ async function onMenuNewPost(): Promise<UiResponse> {
 
 async function onAppInstall(): Promise<TriggerResponse> {
   await reddit.submitCustomPost({
-    title: "New FanVote Poll",
-  });
+  title: "New FanVote Poll",
+  styles: {
+    height: EntrypointHeight.REGULAR,
+  },
+});
 
   return {};
 }

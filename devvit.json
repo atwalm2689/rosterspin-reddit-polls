@@ -9,8 +9,8 @@
         "entry": "game.html"
       },
       "game": {
-        "entry": "game.html"
-      }
+  "entry": "game.html"
+}
     }
   },
   "server": {
