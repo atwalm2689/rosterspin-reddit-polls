@@ -28,6 +28,9 @@
       }
     ]
   },
+  "forms": {
+  "createPollForm": "/internal/form/create-poll"
+},
   "triggers": {
     "onAppInstall": "/internal/on-app-install"
   },

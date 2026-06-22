@@ -46,6 +46,7 @@ export const ApiEndpoint = {
 VoteTeamA: "/api/vote-teamA",
 VoteTeamB: "/api/vote-teamB",
   OnPostCreate: "/internal/menu/post-create",
+  OnCreatePollForm: "/internal/form/create-poll",
   OnAppInstall: "/internal/on-app-install",
 } as const;
 

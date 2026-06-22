@@ -28,7 +28,7 @@ async function init() {
   document.getElementById("teamA-percent")!.textContent = `${teamAPercent}%`;
   document.getElementById("teamB-percent")!.textContent = `${teamBPercent}%`;
   document.getElementById("vote-count")!.textContent = `${data.totalVotes} votes`;
-  document.getElementById("progress-fill")!.style.width = `${teamAPercent}%`;
+
 }
 
 init();
@@ -51,19 +51,25 @@ document.getElementById("teamB-percent")!.textContent =
 
 document.getElementById("vote-count")!.textContent =
   `${data.totalVotes} votes`;
+teamAButton.disabled = true;
+teamBButton.disabled = true;
+teamAButton.classList.add("poll-option--locked");
+teamBButton.classList.add("poll-option--locked");
 
-document.getElementById("progress-fill")!.style.width =
-  `${teamAPercent}%`;
 
 
 }
 
 teamAButton.addEventListener("click", () => {
   vote(ApiEndpoint.VoteTeamA, "Team A");
+  teamAButton.classList.add("poll-option--voted");
+teamBButton.classList.remove("poll-option--voted");
 });
 
 teamBButton.addEventListener("click", () => {
   vote(ApiEndpoint.VoteTeamB, "Team B");
+  teamBButton.classList.add("poll-option--voted");
+teamAButton.classList.remove("poll-option--voted");
 });
 function startCountdown(gameTime: string) {
   function updateCountdown() {

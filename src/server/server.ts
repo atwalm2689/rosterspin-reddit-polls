@@ -77,6 +77,9 @@ case ApiEndpoint.VoteTeamB:
     case ApiEndpoint.OnPostCreate:
       body = await onMenuNewPost();
       break;
+      case ApiEndpoint.OnCreatePollForm:
+  body = await onCreatePollForm(req);
+  break;
     case ApiEndpoint.OnAppInstall:
       body = await onAppInstall();
       break;
@@ -140,8 +143,8 @@ async function getVoteTotals(postId: string) {
   return { teamAVotes, teamBVotes, totalVotes };
 }
 
-function isPollLocked(): boolean {
-  return Date.now() >= new Date(POLL.gameTime).getTime();
+function isPollLocked(gameTime: string): boolean {
+  return Date.now() >= new Date(gameTime).getTime();
 }
 
 function getUserVoteKey() {
@@ -155,7 +158,7 @@ async function onVoteTeamA(): Promise<VoteResponse> {
   const existingVote = await redis.get(userVoteKey);
   const postId = getPostId();
   const poll = await getPollConfig(context, postId);
-if (isPollLocked()) {
+if (isPollLocked(poll.gameTime)) {
   const totals = await getVoteTotals(postId);
 
   return {
@@ -200,7 +203,7 @@ async function onVoteTeamB(): Promise<VoteResponse> {
   const existingVote = await redis.get(userVoteKey);
   const postId = getPostId();
   const poll = await getPollConfig(context, postId);
-if (isPollLocked()) {
+if (isPollLocked(poll.gameTime)) {
   const totals = await getVoteTotals(postId);
 
   return {
@@ -271,26 +274,91 @@ async function onDecrement(req: IncomingMessage): Promise<DecrementResponse> {
 }
 
 async function onMenuNewPost(): Promise<UiResponse> {
- const post = await reddit.submitCustomPost({
-  title: "Mets vs Phillies",
-  styles: {
-    height: EntrypointHeight.REGULAR,
-  },
-});
+  return {
+    showForm: {
+  name: "createPollForm",
+  data: {},
+  form: {
+        title: "Create FanVote Poll",
+        description: "Enter the game information for this poll.",
+        acceptLabel: "Create Poll",
+        fields: [
+          {
+            type: "string",
+            name: "sport",
+            label: "Sport",
+            defaultValue: "MLB",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "awayTeam",
+            label: "Away Team",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "homeTeam",
+            label: "Home Team",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "gameTime",
+            label: "Game Time",
+            helpText: "Example: 2026-06-21T17:20:00-06:00",
+            required: true,
+          },
+        ],
+      },
+    },
+  };
+}
+async function onCreatePollForm(req: IncomingMessage): Promise<UiResponse> {
+  const formData = await readJSON<{
+  sport?: string;
+  awayTeam?: string;
+  homeTeam?: string;
+  gameTime?: string;
+}>(req);
+console.log("RAW FORM DATA:", JSON.stringify(formData));
+
+  const sport = formData.sport?.trim() || "MLB";
+  const awayTeam = formData.awayTeam?.trim();
+  const homeTeam = formData.homeTeam?.trim();
+  const gameTime = formData.gameTime?.trim();
+
+  if (!awayTeam || !homeTeam || !gameTime) {
+    return {
+      showToast: {
+        text: "Please fill out away team, home team, and game time.",
+        appearance: "neutral",
+      },
+    };
+  }
+
+  const post = await reddit.submitCustomPost({
+    title: `${awayTeam} vs ${homeTeam}`,
+    styles: {
+      height: EntrypointHeight.REGULAR,
+    },
+  });
 
   await savePollConfig(post.id, {
-    sport: "MLB",
-    awayTeam: "Mets",
-    homeTeam: "Phillies",
-    gameTime: "2026-06-21T17:20:00-06:00",
+    sport,
+    awayTeam,
+    homeTeam,
+    gameTime,
   });
 
   return {
-    showToast: { text: `Post ${post.id} created.`, appearance: "success" },
+    showToast: {
+      text: `FanVote poll created: ${awayTeam} vs ${homeTeam}`,
+      appearance: "success",
+    },
     navigateTo: post.url,
   };
 }
-
 async function onAppInstall(): Promise<TriggerResponse> {
   await reddit.submitCustomPost({
   title: "New FanVote Poll",

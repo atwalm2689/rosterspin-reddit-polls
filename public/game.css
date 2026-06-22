@@ -102,6 +102,11 @@ border-color: #22c55e;
   background: #14532d;
 }
 
+.poll-option--voted {
+  border: 2px solid #22c55e;
+  background: #14532d;
+}
+
 .poll-option-label {
   font-size: 16px;
   font-weight: 600;
